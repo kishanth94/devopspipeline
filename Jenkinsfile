@@ -2,9 +2,9 @@ pipeline{
     agent any
     
     stages{
-        stage("Git Checkout"){
+        stage("Source Code Checkout"){
             steps{
-                git credentialsId: 'github-creds', url: 'https://github.com/kishanth94/javawebapplication'
+                git credentialsId: 'github-creds', url: 'https://github.com/kishanth94/devopspipeline'
             }
         }
 	
@@ -24,9 +24,9 @@ pipeline{
                 sh """
 		    echo $WORKSPACE
 		    mv target/*.war target/javawebapplication.war
-                    scp -o StrictHostKeyChecking=no target/javawebapplication.war  ec2-user@172.31.5.43:/opt/tomcat8/webapps/
-                    ssh ec2-user@172.31.5.43 /opt/tomcat8/bin/shutdown.sh
-                    ssh ec2-user@172.31.5.43 /opt/tomcat8/bin/startup.sh
+                    scp -o StrictHostKeyChecking=no target/javawebapplication.war  ec2-user@172.31.13.169:/opt/tomcat8/webapps/
+                    ssh ec2-user@172.31.13.169 /opt/tomcat8/bin/shutdown.sh
+                    ssh ec2-user@172.31.13.169 /opt/tomcat8/bin/startup.sh
                 
                 """
                 }
@@ -40,15 +40,5 @@ pipeline{
  	    echo 'Deleting the Workspace'
  	    deleteDir() /* Clean Up our Workspace */
  	  }
- 	    success {
- 		mail to: 'opensourcedevopstraining94@gmail.com',
- 		  subject: "Success Build Pipeline: ${currentBuild.fullDisplayName}",
- 		  body: "The pipeline ${env.BUILD_URL} completed successfully"
- 	    }
- 	    failure {
-   	        mail to: 'opensourcedevopstraining94@gmail.com',
-  		  subject: "Failed Build Pipeline: ${currentBuild.fullDisplayName}",
-  		  body: "Something is wrong with ${env.BUILD_URL}"
-  	    }
      }
 }
